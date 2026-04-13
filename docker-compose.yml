@@ -10,7 +10,8 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pg_data:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data # Keep data from being deleted at container relaunch
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql # Create schemas on launch
     healthcheck:
         test: [ "CMD-SHELL", "pg_isready -U airflow -d airflow" ]
         interval: 10s
@@ -32,7 +33,7 @@ services:
     volumes:
       - ./dags:/opt/airflow/dags
       - ./dbt:/opt/airflow/dbt
-      - ./data:/opt/airflow/data
+      - ./data:/opt/airflow/data # Only when using read from file!!!!!!
     healthcheck:
       test: [ "CMD", "curl", "--fail", "http://localhost:8080/health" ]
       interval: 30s
